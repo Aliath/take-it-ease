@@ -1,5 +1,11 @@
 # take-it-ease
 
+## 0.0.6
+
+### Patch Changes
+
+- Enhance tests, decompose functions
+
 ## 0.0.5
 
 ### Patch Changes

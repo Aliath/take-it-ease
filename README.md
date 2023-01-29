@@ -32,8 +32,8 @@ This library was created to address the limitations of [tween.js](https://github
 ```tsx
 import { createController } from "take-it-ease";
 
-const controller = createController();
-controller.animate({
+const { animate, tick } = createController();
+animate({
   time: 300,
   from: { x: 20, y: -10 },
   to: { x: -10, y: 20 },
@@ -42,6 +42,8 @@ controller.animate({
     // result is inferred, you don't have to type it!
   },
 });
+
+requestAnimationFrame(animate);
 ```
 
 ---
@@ -52,6 +54,6 @@ controller.animate({
 
 Controler is an instance that allows you to group animated elements. You can set their detault values (such as `easingFunction`). A controller runs every animation within its tick, making it much easier to control.
 
-> Can I animate an array
+> Can I animate an array?
 
 Not yet, it will come up with higher versions of library.

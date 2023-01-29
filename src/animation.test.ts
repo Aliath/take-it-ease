@@ -1,4 +1,4 @@
-import { AnimationParams, createAnimation } from "./animation";
+import { AnimationParams, createAnimation, MergeStrategies } from "./animation";
 import { ControllerUpdateFunction, ObjectToAnimate } from "./types";
 
 const getMockedAnimation = <T extends ObjectToAnimate, D extends T>(
@@ -53,11 +53,9 @@ describe("animation", () => {
       include: ["x"],
     });
 
-    // "empty" update with no time ellapsed
     updateFunction();
     expect(onUpdate).toBeCalledWith({ x: 0 });
 
-    // "meaningful" update
     getTimestamp.mockReturnValue(500);
     updateFunction();
     expect(onUpdate).toBeCalledWith({ x: 50 });
@@ -74,11 +72,9 @@ describe("animation", () => {
       include: ["x", "y"],
     });
 
-    // "empty" update with no time ellapsed
     updateFunction();
     expect(onUpdate).toBeCalledWith({ x: 0, y: 50 });
 
-    // "meaningful" update
     getTimestamp.mockReturnValue(500);
     updateFunction();
     expect(onUpdate).toBeCalledWith({ x: 50, y: 75 });
@@ -95,13 +91,68 @@ describe("animation", () => {
       include: ["x"],
     });
 
-    // "meaningful" update
     getTimestamp.mockReturnValue(1000);
     updateFunction();
 
     expect(onUpdate).toBeCalledWith({
       x: 100,
       y: 50,
+    });
+  });
+
+  it("respects `mergeFieldsStrategy={MergeStrategies.INSERT_WITH_FIRST_TICK}` property", () => {
+    const onUpdate = vi.fn();
+
+    const { updateFunction, getTimestamp } = getMockedAnimation({
+      from: { x: 0 },
+      to: { x: 100, y: 100 },
+      time: 1000,
+      onUpdate,
+      include: ["x", "y"],
+      strategy: MergeStrategies.INSERT_WITH_FIRST_TICK,
+    });
+
+    getTimestamp.mockReturnValue(0);
+    updateFunction();
+
+    expect(onUpdate).toBeCalledWith({
+      x: 0,
+      y: 100,
+    });
+  });
+
+  it("respects `mergeFieldsStrategy={MergeStrategies.INSERT_WITH_FIRST_TICK}` property", () => {
+    const onUpdate = vi.fn();
+
+    const { updateFunction, getTimestamp } = getMockedAnimation({
+      from: { x: 0 },
+      to: { x: 100, y: 100 },
+      time: 1000,
+      onUpdate,
+      include: ["x", "y"],
+      strategy: MergeStrategies.INSERT_WITH_LAST_TICK,
+    });
+
+    getTimestamp.mockReturnValue(0);
+    updateFunction();
+
+    expect(onUpdate).toBeCalledWith({
+      x: 0,
+    });
+
+    getTimestamp.mockReturnValue(500);
+    updateFunction();
+
+    expect(onUpdate).toBeCalledWith({
+      x: 50,
+    });
+
+    getTimestamp.mockReturnValue(1000);
+    updateFunction();
+
+    expect(onUpdate).toBeCalledWith({
+      x: 100,
+      y: 100,
     });
   });
 
@@ -117,11 +168,9 @@ describe("animation", () => {
       include: ["x"],
     });
 
-    // "empty" update with no time ellapsed
     updateFunction();
     expect(onFinish).not.toBeCalled();
 
-    // "meaningful" update
     getTimestamp.mockReturnValue(1000);
     updateFunction();
     expect(onFinish).toBeCalled();
@@ -139,7 +188,6 @@ describe("animation", () => {
       include: ["x"],
     });
 
-    // "empty" update with no time ellapsed
     updateFunction();
     getTimestamp.mockReturnValue(0);
     expect(onUpdate).toBeCalledWith({ x: 100 });
@@ -155,7 +203,6 @@ describe("animation", () => {
         include: ["x"],
       });
 
-    // run tick to make sure animation finishes
     getTimestamp.mockReturnValueOnce(1000);
     updateFunction();
     expect(deregisterUpdateFunction).toBeCalledWith(updateFunction);

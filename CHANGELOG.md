@@ -1,5 +1,11 @@
 # take-it-ease
 
+## 0.1.0
+
+### Minor Changes
+
+- Add ability to pick merge strategy
+
 ## 0.0.9
 
 ### Patch Changes

@@ -9,6 +9,11 @@ import {
   TimestampGetter,
 } from "./types";
 
+export const MergeStrategies = {
+  INSERT_WITH_FIRST_TICK: "INSERT_WITH_FIRST_TICK",
+  INSERT_WITH_LAST_TICK: "INSERT_WITH_LAST_TICK",
+} as const;
+
 export type AnimationParams<
   T extends ObjectToAnimate,
   D extends T
@@ -19,6 +24,7 @@ export type AnimationParams<
   onFinish?: () => void;
   from: T;
   to: D;
+  strategy?: (typeof MergeStrategies)[keyof typeof MergeStrategies];
 };
 
 export function createAnimation<T extends ObjectToAnimate, D extends T>(
@@ -36,6 +42,7 @@ export function createAnimation<T extends ObjectToAnimate, D extends T>(
     time,
     onUpdate,
     onFinish,
+    strategy = MergeStrategies.INSERT_WITH_FIRST_TICK,
   }: AnimationParams<T, D>
 ) {
   const startTickTimestamp = controller.getTimestamp();
@@ -49,14 +56,25 @@ export function createAnimation<T extends ObjectToAnimate, D extends T>(
     const ellapsedTimeFraction = easingFunction(
       Math.min(1, Math.max(0, timeDelta / time))
     );
+    const animationFinished = ellapsedTimeFraction === 1;
 
     include.forEach((key) => {
       const typedFrom = from as T;
       const typedTo = to as D;
       const typedCurrentTarget = currentTarget as D;
+      const alreadyExist = key in typedFrom;
+
+      if (!alreadyExist) {
+        if (
+          strategy === MergeStrategies.INSERT_WITH_LAST_TICK &&
+          !animationFinished
+        ) {
+          return;
+        }
+      }
 
       const previousValue = (
-        key in typedFrom ? typedFrom[key as keyof T] : typedTo[key]
+        alreadyExist ? typedFrom[key as keyof T] : typedTo[key]
       ) as number;
       const targetValue = typedTo[key] as number;
 
@@ -68,7 +86,7 @@ export function createAnimation<T extends ObjectToAnimate, D extends T>(
 
     onUpdate(currentTarget as Parameters<typeof onUpdate>[0]);
 
-    if (ellapsedTimeFraction === 1) {
+    if (animationFinished) {
       if (onFinish) {
         onFinish();
       }

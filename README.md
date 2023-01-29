@@ -1,10 +1,18 @@
 <p align="center">
-
   <img height="50" alt="Take it ease logo" src="https://user-images.githubusercontent.com/28493823/215351667-485a9612-a102-4fa3-b3b2-4095f49fde83.png" />
-
 </p>
 
----
+<p align="center">
+  <a aria-label="NPM version" href="https://www.npmjs.com/package/next">
+    <img alt="" src="https://img.shields.io/npm/v/take-it-ease.svg?style=for-the-badge">
+  </a>
+  <a aria-label="License" href="https://github.com/Aliath/take-it-ease">
+    <img alt="" src="https://img.shields.io/npm/l/take-it-ease.svg?style=for-the-badge">
+  </a>
+  <a aria-label="Test coverage" href="https://github.com/Aliath/take-it-ease">
+    <img alt="" src="https://img.shields.io/coverallsCoverage/github/Aliath/take-it-ease?style=for-the-badge">
+  </a>
+</p>
 
 ### Installation
 
@@ -33,27 +41,16 @@ This library was created to address the limitations of [tween.js](https://github
 import { createController } from "take-it-ease";
 
 const { animate, tick } = createController();
+
 animate({
   time: 300,
   from: { x: 20, y: -10 },
   to: { x: -10, y: 20 },
-  include: ["x", "y"] // strictly define animation target
+  include: ["x", "y"], // strictly define animation target
   onUpdate: (result) => {
     // result is inferred, you don't have to type it!
   },
 });
 
-requestAnimationFrame(animate);
+requestAnimationFrame(tick);
 ```
-
----
-
-### Terminology
-
-> What is controller?
-
-Controler is an instance that allows you to group animated elements. You can set their detault values (such as `easingFunction`). A controller runs every animation within its tick, making it much easier to control.
-
-> Can I animate an array?
-
-Not yet, it will come up with higher versions of library.

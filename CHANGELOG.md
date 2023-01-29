@@ -1,5 +1,11 @@
 # take-it-ease
 
+## 0.0.7
+
+### Patch Changes
+
+- Fix README.md typo, add badges
+
 ## 0.0.6
 
 ### Patch Changes

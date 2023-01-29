@@ -1,7 +1,17 @@
 {
   "name": "take-it-ease",
+  "description": "Smooth object animations with well TS bindings and advanced merging strategies",
+  "keywords": [
+    "animations",
+    "animating objects",
+    "tween.js",
+    "easings",
+    "ease",
+    "easing objects"
+  ],
+  "homepage": "https://github.com/Aliath/take-it-ease",
   "license": "MIT",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",

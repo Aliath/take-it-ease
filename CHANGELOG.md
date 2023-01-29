@@ -1,5 +1,11 @@
 # take-it-ease
 
+## 0.0.9
+
+### Patch Changes
+
+- GH & NPM updates
+
 ## 0.0.8
 
 ### Patch Changes

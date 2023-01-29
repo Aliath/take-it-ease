@@ -3,15 +3,15 @@
 </p>
 
 <p align="center">
-  <a aria-label="NPM version" href="https://www.npmjs.com/package/next">
-    <img alt="" src="https://img.shields.io/npm/v/take-it-ease.svg?style=for-the-badge">
-  </a>
-  <a aria-label="License" href="https://github.com/Aliath/take-it-ease">
-    <img alt="" src="https://img.shields.io/npm/l/take-it-ease.svg?style=for-the-badge">
-  </a>
-  <a aria-label="Test coverage" href="https://github.com/Aliath/take-it-ease">
-    <img alt="" src="https://img.shields.io/coverallsCoverage/github/Aliath/take-it-ease?style=for-the-badge">
-  </a>
+<a aria-label="NPM version" href="https://www.npmjs.com/package/take-it-ease">
+<img alt="" src="https://img.shields.io/npm/v/take-it-ease.svg?style=for-the-badge">
+</a>
+<a aria-label="License" href="https://github.com/Aliath/take-it-ease/blob/main/LICENSE.md">
+<img alt="" src="https://img.shields.io/npm/l/take-it-ease.svg?style=for-the-badge">
+</a>
+<a aria-label="Test coverage" href="https://github.com/Aliath/take-it-ease">
+<img alt="" src="https://img.shields.io/coverallsCoverage/github/Aliath/take-it-ease?style=for-the-badge">
+</a>
 </p>
 
 ### Installation

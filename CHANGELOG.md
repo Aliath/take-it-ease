@@ -1,4 +1,4 @@
-# take-it-easing
+# take-it-ease
 
 ## 0.0.1
 

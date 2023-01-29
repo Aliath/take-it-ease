@@ -7,6 +7,6 @@
     "strict": true /* Enable all strict type-checking options. */,
     "noUncheckedIndexedAccess": true,
     "noEmit": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals", "node"]
   }
 }

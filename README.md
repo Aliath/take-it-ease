@@ -1,6 +1,6 @@
 <p align="center">
 
-  <img height="50" alt="take-it-easing" src="https://user-images.githubusercontent.com/28493823/214970747-42e75b8e-f9c4-4efc-87c1-63f93a591b2a.png" />
+  <img height="50" alt="Take it ease logo" src="https://user-images.githubusercontent.com/28493823/214970747-42e75b8e-f9c4-4efc-87c1-63f93a591b2a.png" />
 
 </p>
 
@@ -10,13 +10,13 @@
 
 ```bash
 # npm
-npm install --save take-it-easing
+npm install --save take-it-ease
 
 # yarn
-yarn add take-it-easing
+yarn add take-it-ease
 
 # pnpm
-pnpm add take-it-easing
+pnpm add take-it-ease
 ```
 
 ---
@@ -30,7 +30,7 @@ This library was created to address the limitations of [tween.js](https://github
 ### Usage
 
 ```tsx
-import createController from "take-it-easing";
+import { createController } from "take-it-ease";
 
 const controller = createController();
 controller.animate({

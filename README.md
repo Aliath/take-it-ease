@@ -27,15 +27,42 @@ yarn add take-it-ease
 pnpm add take-it-ease
 ```
 
----
-
 ## Motivation
 
-This library was created to address the limitations of [tween.js](https://github.com/tweenjs/tween.js/), such as the silent merging of properties, lack of clear typing and mutating original values. This library offers better TypeScript compatibility, customizable merging strategies, and improved typing for a more intuitive and reliable animation experience.
+This library was created to address the limitations of [tween.js](https://github.com/tweenjs/tween.js/), such as the silent merging of properties, lack of clear typing and mutating original values.
 
----
+This library offers better TypeScript compatibility, customizable merging strategies, and improved typing for a more intuitive and reliable animation experience.
 
 ## Usage
+
+### Simple example
+
+```tsx
+import { createController } from "take-it-ease";
+
+const controller = createController();
+
+controller.animate({
+  time: 1_000,
+  from: { x: 20, y: -10 },
+  to: { x: -10, y: 20 },
+  include: ["x", "y"], // animation target 🎯
+  onUpdate: (updatedObject) => {
+    // updatedObject: { x: number; y: number }
+  },
+});
+
+// prefferable way to call tick, but you can use anything else 😎
+const animate = () => {
+  controller.tick();
+
+  requestAnimationFrame(animate);
+};
+
+requestAnimationFrame(animate);
+```
+
+### More advanced example
 
 ```tsx
 import {
@@ -47,26 +74,26 @@ import {
 const controller = createController();
 
 controller.animate({
-  time: 300,
-  from: { x: 20, y: -10 },
-  to: { x: -10, y: 20 },
-  include: ["x", "y"], // define animation target 🎯
-  easingFunction: EasingFunctions.LINEAR, // not required, default one
-  strategy: MergeStrategies.INSERT_WITH_FIRST_TICK, // not required, default one
-  onUpdate: (result) => {
-    // result: { x: number; y: number }
+  time: 1_000,
+  from: { name: "Bob", salary: 21_000 },
+  to: { name: "Bob", salary: 37_000, bonus: 500 },
+  include: ["salary", "bonus"],
+  strategy: MergeStrategies.INSERT_WITH_LAST_TICK,
+  easingFunction: EasingFunctions.CUBIC_OUT,
+  onUpdate: (updatedObject) => {
+    // updatedObject before last tick: { name: "Bob"; salary: number }
+    // last tick: { name: "Bob"; salary: number, bonus: 500 }
   },
 });
 
-// prefferable way to call tick, but you can use anything else 😎
-requestAnimationFrame(controller.tick);
+someApi.on("idle", controller.tick);
 ```
-
----
 
 ## Strategies
 
 When using a library you can decide when to insert properties that haven't existed before.
 
-- With `MergeStrategies.INSERT_WITH_FIRST_TICK` difference from target object will be added with the first tick
-- With `MergeStrategies.INSERT_WITH_LAST_TICK` difference from target object will be added with the last tick
+`MergeStrategies` is an object with following properties:
+
+- `INSERT_WITH_FIRST_TICK` – applies non-existing properties from target object with the first tick,
+- `INSERT_WITH_LAST_TICK` – applies non-existing properties from target object with the last tick

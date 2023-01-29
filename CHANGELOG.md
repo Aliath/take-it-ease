@@ -1,5 +1,11 @@
 # take-it-ease
 
+## 0.0.8
+
+### Patch Changes
+
+- Update README
+
 ## 0.0.7
 
 ### Patch Changes

@@ -1,19 +1,27 @@
-import { type AnimationParams, createAnimation } from "./animation";
+import { createAnimation } from "./animate";
+import { createArrayAnimation } from "./animate-array";
 import { EasingFunctions } from "./easings";
 import {
+  AnimationParams,
+  ArrayAnimationParams,
   ControllerUpdateFunction,
   ObjectToAnimate,
   SharedProperties,
+  Strategies,
+  Strategy,
   TimestampGetter,
 } from "./types";
 
 export type ControllerParams = SharedProperties & {
   getTimestamp?: TimestampGetter;
+  arrayMergeStrategy?: Strategy;
 };
 
 export function createController({
   easingFunction = EasingFunctions.LINEAR,
   getTimestamp = performance.now,
+  mergeStrategy = Strategies.MERGE_WITH_FIRST_TICK,
+  arrayMergeStrategy = Strategies.MERGE_WITH_FIRST_TICK,
 }: ControllerParams = {}) {
   const activeAnimations = new Set<ControllerUpdateFunction>();
 
@@ -40,6 +48,24 @@ export function createController({
       {
         easingFunction,
         getTimestamp,
+        mergeStrategy,
+        arrayMergeStrategy,
+        registerUpdateFunction,
+        deregisterUpdateFunction,
+      },
+      props
+    );
+  };
+
+  const animateArray = <T extends ObjectToAnimate, D extends T>(
+    props: ArrayAnimationParams<T, D>
+  ) => {
+    return createArrayAnimation<T, D>(
+      {
+        easingFunction,
+        getTimestamp,
+        mergeStrategy,
+        arrayMergeStrategy,
         registerUpdateFunction,
         deregisterUpdateFunction,
       },
@@ -50,5 +76,6 @@ export function createController({
   return {
     tick,
     animate,
+    animateArray,
   } as const;
 }

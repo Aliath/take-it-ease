@@ -1,103 +1,205 @@
-import * as animation from "./animation";
+import * as animation from "./animate";
+import * as arrayAnimation from "./animate-array";
 import { createController } from "./controller";
 
 describe("controller", () => {
-  it("returns `tick` and `animate` methods", () => {
+  it("returns `tick`, `animate`, `animateArray` methods", () => {
     const controller = createController();
 
     expect(controller).toHaveProperty("tick");
     expect(controller).toHaveProperty("animate");
+    expect(controller).toHaveProperty("animateArray");
   });
 
-  it("exposes methods to register and deregister", () => {
-    const spy = vi.spyOn(animation, "createAnimation");
+  describe(".animate method", () => {
+    it("exposes methods to register and deregister for createAnimation", () => {
+      const spy = vi.spyOn(animation, "createAnimation");
 
-    const controller = createController();
+      const controller = createController();
 
-    controller.animate({
-      from: { x: 0 },
-      to: { x: 100 },
-      time: 1000,
-      onUpdate: () => {},
-      easingFunction: () => 1,
-      include: ["x"],
+      controller.animate({
+        from: { x: 0 },
+        to: { x: 100 },
+        time: 1000,
+        onUpdate: () => {},
+        easingFunction: () => 1,
+        include: ["x"],
+      });
+
+      const args = spy.mock.calls[0]![0];
+
+      expect(args.registerUpdateFunction).toBeTypeOf("function");
+      expect(args.deregisterUpdateFunction).toBeTypeOf("function");
     });
 
-    const args = spy.mock.calls[0]![0];
+    it("implements proper mechanism of registration", () => {
+      const spy = vi.spyOn(animation, "createAnimation");
+      const update = vi.fn();
 
-    expect(args.registerUpdateFunction).toBeTypeOf("function");
-    expect(args.deregisterUpdateFunction).toBeTypeOf("function");
+      const controller = createController();
+
+      controller.animate({
+        from: { x: 0 },
+        to: { x: 100 },
+        time: 1000,
+        onUpdate: () => {},
+        easingFunction: () => 1,
+        include: ["x"],
+      });
+
+      const { registerUpdateFunction, deregisterUpdateFunction } =
+        spy.mock.calls[0]![0];
+
+      registerUpdateFunction(update);
+      controller.tick();
+      expect(update).toBeCalled();
+
+      deregisterUpdateFunction(update);
+      controller.tick();
+      expect(update).toBeCalledTimes(1);
+    });
+
+    it("passes `getTimestamp` and `easingFunction` to animation", () => {
+      const getTimestamp = vi.fn();
+      const easingFunction = vi.fn();
+      const spy = vi.spyOn(animation, "createAnimation");
+
+      const controller = createController({
+        getTimestamp,
+        easingFunction,
+      });
+
+      controller.animate({
+        from: { x: 0 },
+        to: { x: 100 },
+        time: 1000,
+        onUpdate: () => {},
+        easingFunction: () => 1,
+        include: ["x"],
+      });
+
+      const args = spy.mock.calls[0]![0];
+
+      expect(args.getTimestamp).toBe(getTimestamp);
+      expect(args.easingFunction).toBe(easingFunction);
+    });
+
+    it("fallbacks `getTimestamp` and `easingFunction` if not passed", () => {
+      const spy = vi.spyOn(animation, "createAnimation");
+
+      const controller = createController();
+
+      controller.animate({
+        from: { x: 0 },
+        to: { x: 100 },
+        time: 1000,
+        onUpdate: () => {},
+        easingFunction: () => 1,
+        include: ["x"],
+      });
+
+      const args = spy.mock.calls[0]![0];
+
+      expect(args.getTimestamp).toBeTypeOf("function");
+      expect(args.easingFunction).toBeTypeOf("function");
+    });
   });
 
-  it("implements proper mechanism of registration", () => {
-    const spy = vi.spyOn(animation, "createAnimation");
-    const update = vi.fn();
+  describe(".animateArray method", () => {
+    it("exposes methods to register and deregister for createAnimation", () => {
+      const spy = vi.spyOn(arrayAnimation, "createArrayAnimation");
 
-    const controller = createController();
+      const controller = createController();
 
-    controller.animate({
-      from: { x: 0 },
-      to: { x: 100 },
-      time: 1000,
-      onUpdate: () => {},
-      easingFunction: () => 1,
-      include: ["x"],
+      controller.animateArray({
+        from: [{ x: 0, key: "A" }],
+        to: [{ x: 100, key: "A" }],
+        keyExtractor: (item) => item.key,
+        time: 1000,
+        onUpdate: () => {},
+        easingFunction: () => 1,
+        include: ["x"],
+      });
+
+      const args = spy.mock.calls[0]![0];
+
+      expect(args.registerUpdateFunction).toBeTypeOf("function");
+      expect(args.deregisterUpdateFunction).toBeTypeOf("function");
     });
 
-    const { registerUpdateFunction, deregisterUpdateFunction } =
-      spy.mock.calls[0]![0];
+    it("implements proper mechanism of registration", () => {
+      const spy = vi.spyOn(arrayAnimation, "createArrayAnimation");
+      const update = vi.fn();
 
-    registerUpdateFunction(update);
-    controller.tick();
-    expect(update).toBeCalled();
+      const controller = createController();
 
-    deregisterUpdateFunction(update);
-    controller.tick();
-    expect(update).toBeCalledTimes(1);
-  });
+      controller.animateArray({
+        from: [{ x: 0, key: "A" }],
+        to: [{ x: 100, key: "A" }],
+        keyExtractor: (item) => item.key,
+        time: 1000,
+        onUpdate: () => {},
+        easingFunction: () => 1,
+        include: ["x"],
+      });
 
-  it("passes `getTimestamp` and `easingFunction` to animation", () => {
-    const getTimestamp = vi.fn();
-    const easingFunction = vi.fn();
-    const spy = vi.spyOn(animation, "createAnimation");
+      const { registerUpdateFunction, deregisterUpdateFunction } =
+        spy.mock.calls[0]![0];
 
-    const controller = createController({
-      getTimestamp,
-      easingFunction,
+      registerUpdateFunction(update);
+      controller.tick();
+      expect(update).toBeCalled();
+
+      deregisterUpdateFunction(update);
+      controller.tick();
+      expect(update).toBeCalledTimes(1);
     });
 
-    controller.animate({
-      from: { x: 0 },
-      to: { x: 100 },
-      time: 1000,
-      onUpdate: () => {},
-      easingFunction: () => 1,
-      include: ["x"],
+    it("passes `getTimestamp` and `easingFunction` to animation", () => {
+      const getTimestamp = vi.fn();
+      const easingFunction = vi.fn();
+      const spy = vi.spyOn(arrayAnimation, "createArrayAnimation");
+
+      const controller = createController({
+        getTimestamp,
+        easingFunction,
+      });
+
+      controller.animateArray({
+        from: [{ x: 0, key: "A" }],
+        to: [{ x: 100, key: "A" }],
+        keyExtractor: (item) => item.key,
+        time: 1000,
+        onUpdate: () => {},
+        easingFunction: () => 1,
+        include: ["x"],
+      });
+
+      const args = spy.mock.calls[0]![0];
+
+      expect(args.getTimestamp).toBe(getTimestamp);
+      expect(args.easingFunction).toBe(easingFunction);
     });
 
-    const args = spy.mock.calls[0]![0];
+    it("fallbacks `getTimestamp` and `easingFunction` if not passed", () => {
+      const spy = vi.spyOn(arrayAnimation, "createArrayAnimation");
 
-    expect(args.getTimestamp).toBe(getTimestamp);
-    expect(args.easingFunction).toBe(easingFunction);
-  });
+      const controller = createController();
 
-  it("fallbacks `getTimestamp` and `easingFunction` if not passed", () => {
-    const spy = vi.spyOn(animation, "createAnimation");
+      controller.animateArray({
+        from: [{ x: 0, key: "A" }],
+        to: [{ x: 100, key: "A" }],
+        keyExtractor: (item) => item.key,
+        time: 1000,
+        onUpdate: () => {},
+        easingFunction: () => 1,
+        include: ["x"],
+      });
 
-    const controller = createController();
+      const args = spy.mock.calls[0]![0];
 
-    controller.animate({
-      from: { x: 0 },
-      to: { x: 100 },
-      time: 1000,
-      onUpdate: () => {},
-      easingFunction: () => 1,
-      include: ["x"],
+      expect(args.getTimestamp).toBeTypeOf("function");
+      expect(args.easingFunction).toBeTypeOf("function");
     });
-
-    const args = spy.mock.calls[0]![0];
-
-    expect(args.getTimestamp).toBeTypeOf("function");
-    expect(args.easingFunction).toBeTypeOf("function");
   });
 });

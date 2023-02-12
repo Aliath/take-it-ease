@@ -1,5 +1,12 @@
 # take-it-ease
 
+## 1.0.0
+
+### Major Changes
+
+- Add ability to animate arrays
+- Change parameter names
+
 ## 0.1.1
 
 ### Patch Changes

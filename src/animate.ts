@@ -1,39 +1,14 @@
 import deepCloneBuilder from "rfdc";
 const deepClone = deepCloneBuilder();
 import {
-  ControllerUpdateFunction,
-  EasingFunction,
-  KeysOfType,
+  AnimationParams,
+  Strategies,
   ObjectToAnimate,
-  SharedProperties,
-  TimestampGetter,
+  AnimationControllerProps,
 } from "./types";
 
-export const MergeStrategies = {
-  INSERT_WITH_FIRST_TICK: "INSERT_WITH_FIRST_TICK",
-  INSERT_WITH_LAST_TICK: "INSERT_WITH_LAST_TICK",
-} as const;
-
-export type AnimationParams<
-  T extends ObjectToAnimate,
-  D extends T
-> = SharedProperties & {
-  time: number;
-  include: KeysOfType<D, number>[];
-  onUpdate: (updatedValue: D) => void;
-  onFinish?: () => void;
-  from: T;
-  to: D;
-  strategy?: (typeof MergeStrategies)[keyof typeof MergeStrategies];
-};
-
 export function createAnimation<T extends ObjectToAnimate, D extends T>(
-  controller: {
-    getTimestamp: TimestampGetter;
-    easingFunction: EasingFunction;
-    registerUpdateFunction: (update: ControllerUpdateFunction) => void;
-    deregisterUpdateFunction: (update: ControllerUpdateFunction) => void;
-  },
+  controller: AnimationControllerProps,
   {
     from,
     to,
@@ -42,7 +17,7 @@ export function createAnimation<T extends ObjectToAnimate, D extends T>(
     time,
     onUpdate,
     onFinish,
-    strategy = MergeStrategies.INSERT_WITH_FIRST_TICK,
+    mergeStrategy = controller.mergeStrategy,
   }: AnimationParams<T, D>
 ) {
   const startTickTimestamp = controller.getTimestamp();
@@ -59,14 +34,14 @@ export function createAnimation<T extends ObjectToAnimate, D extends T>(
     const animationFinished = ellapsedTimeFraction === 1;
 
     include.forEach((key) => {
-      const typedFrom = from as T;
-      const typedTo = to as D;
-      const typedCurrentTarget = currentTarget as D;
+      const typedFrom = from;
+      const typedTo = to;
+      const typedCurrentTarget = currentTarget;
       const alreadyExist = key in typedFrom;
 
       if (!alreadyExist) {
         if (
-          strategy === MergeStrategies.INSERT_WITH_LAST_TICK &&
+          mergeStrategy === Strategies.MERGE_WITH_LAST_TICK &&
           !animationFinished
         ) {
           return;

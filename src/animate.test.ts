@@ -1,5 +1,10 @@
-import { AnimationParams, createAnimation, MergeStrategies } from "./animation";
-import { ControllerUpdateFunction, ObjectToAnimate } from "./types";
+import { createAnimation } from "./animate";
+import {
+  AnimationParams,
+  ControllerUpdateFunction,
+  Strategies,
+  ObjectToAnimate,
+} from "./types";
 
 const getMockedAnimation = <T extends ObjectToAnimate, D extends T>(
   props: AnimationParams<T, D>
@@ -15,6 +20,7 @@ const getMockedAnimation = <T extends ObjectToAnimate, D extends T>(
       easingFunction,
       registerUpdateFunction,
       deregisterUpdateFunction,
+      mergeStrategy: Strategies.MERGE_WITH_FIRST_TICK,
     },
     props
   );
@@ -29,7 +35,7 @@ const getMockedAnimation = <T extends ObjectToAnimate, D extends T>(
   };
 };
 
-describe("animation", () => {
+describe("single object animation", () => {
   it("registers update function to controller", () => {
     const { registerUpdateFunction } = getMockedAnimation({
       from: { x: 0 },
@@ -100,7 +106,7 @@ describe("animation", () => {
     });
   });
 
-  it("respects `mergeFieldsStrategy={MergeStrategies.INSERT_WITH_FIRST_TICK}` property", () => {
+  it("respects `mergeStrategy={MERGE_WITH_FIRST_TICK}` property", () => {
     const onUpdate = vi.fn();
 
     const { updateFunction, getTimestamp } = getMockedAnimation({
@@ -109,7 +115,7 @@ describe("animation", () => {
       time: 1000,
       onUpdate,
       include: ["x", "y"],
-      strategy: MergeStrategies.INSERT_WITH_FIRST_TICK,
+      mergeStrategy: Strategies.MERGE_WITH_FIRST_TICK,
     });
 
     getTimestamp.mockReturnValue(0);
@@ -121,7 +127,7 @@ describe("animation", () => {
     });
   });
 
-  it("respects `mergeFieldsStrategy={MergeStrategies.INSERT_WITH_FIRST_TICK}` property", () => {
+  it("respects `mergeStrategy={MergeStrategies.MERGE_WITH_LAST_TICK}` property", () => {
     const onUpdate = vi.fn();
 
     const { updateFunction, getTimestamp } = getMockedAnimation({
@@ -130,7 +136,7 @@ describe("animation", () => {
       time: 1000,
       onUpdate,
       include: ["x", "y"],
-      strategy: MergeStrategies.INSERT_WITH_LAST_TICK,
+      mergeStrategy: Strategies.MERGE_WITH_LAST_TICK,
     });
 
     getTimestamp.mockReturnValue(0);

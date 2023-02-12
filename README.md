@@ -65,11 +65,7 @@ requestAnimationFrame(animate);
 ### More advanced example
 
 ```tsx
-import {
-  createController,
-  EasingFunctions,
-  MergeStrategies,
-} from "take-it-ease";
+import { createController, EasingFunctions, Strategies } from "take-it-ease";
 
 const controller = createController();
 
@@ -78,22 +74,69 @@ controller.animate({
   from: { name: "Bob", salary: 21_000 },
   to: { name: "Bob", salary: 37_000, bonus: 500 },
   include: ["salary", "bonus"],
-  strategy: MergeStrategies.INSERT_WITH_LAST_TICK,
+  mergeStrategy: Strategies.MERGE_WITH_LAST_TICK,
   easingFunction: EasingFunctions.CUBIC_OUT,
   onUpdate: (updatedObject) => {
     // updatedObject before last tick: { name: "Bob"; salary: number }
-    // last tick: { name: "Bob"; salary: number, bonus: 500 }
+    // last tick: { name: "Bob"; salary: 37_000, bonus: 500 }
   },
 });
 
 someApi.on("idle", controller.tick);
 ```
 
+### Animating arrays
+
+```tsx
+import { createController, EasingFunctions, Strategies } from "take-it-ease";
+
+const controller = createController();
+
+controller.animateArray({
+  time: 1_000,
+  from: [
+    { name: "Bob", salary: 21_000 },
+    { name: "Alice", salary: 0 },
+  ],
+  to: [
+    { name: "Bob", salary: 37_000, bonus: 500 },
+    { name: "Mark", salary: 42_000 },
+  ],
+  keyExtractor: (item) => item.name,
+  include: ["salary", "bonus"],
+  mergeStrategy: Strategies.MERGE_WITH_FIRST_TICK,
+  arrayMergeStrategy: Strategies.MERGE_WITH_FIRST_TICK,
+  easingFunction: EasingFunctions.CUBIC_OUT,
+  onUpdate: (updatedArray) => {
+    /*
+      updatedObject before last tick:
+      [
+        { name: "Bob", salary: number },
+        { name: "Alice", salary: 0 },
+      ]
+    */
+    /*
+      last tick:
+      [
+        { name: "Bob", salary: 37_000, bonus: 500 },
+        { name: "Alice", salary: 0 },
+        { name: "Mark", salary: 42_000 },
+      ]
+    */
+  },
+});
+```
+
 ## Strategies
 
 When using a library you can decide when to insert properties that haven't existed before.
 
-`MergeStrategies` is an object with following properties:
+`Strategies` is an object with following properties:
 
-- `INSERT_WITH_FIRST_TICK` – applies non-existing properties from target object with the first tick,
-- `INSERT_WITH_LAST_TICK` – applies non-existing properties from target object with the last tick
+- `MERGE_WITH_FIRST_TICK` – applies non-existing properties from target with the first tick,
+- `MERGE_WITH_LAST_TICK` – applies non-existing properties from target with the last tick
+
+Strategies can be used to describe both:
+
+- `mergeStrategy`,
+- `arrayMergeStrategy`

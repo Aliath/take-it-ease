@@ -20,6 +20,7 @@ const getMockedAnimation = <T extends ObjectToAnimate, D extends T>(
       easingFunction,
       registerUpdateFunction,
       deregisterUpdateFunction,
+      arrayMergeStrategy: Strategies.MERGE_WITH_FIRST_TICK,
       mergeStrategy: Strategies.MERGE_WITH_FIRST_TICK,
     },
     props

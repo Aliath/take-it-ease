@@ -1,5 +1,12 @@
 # take-it-ease
 
+## 1.0.1
+
+### Patch Changes
+
+- Add badge in README file
+- Remove unused file
+
 ## 1.0.0
 
 ### Major Changes
